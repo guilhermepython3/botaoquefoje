@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botão Fugitivo</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        #fugitive-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: default;
+            position: absolute;
+            transition: all 0.2s ease;
+            user-select: none;
+            outline: none;
+        }
+
+        #fugitive-btn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="fugitive-btn" tabindex="-1">Tente me pegar!</button>
+
+    <script>
+        const button = document.getElementById('fugitive-btn');
+        const detectionRadius = 100; // Distância em pixels para detectar o mouse
+
+        // Posiciona o botão no centro inicialmente
+        function centerButton() {
+            button.style.left = '50%';
+            button.style.top = '50%';
+            button.style.transform = 'translate(-50%, -50%)';
+        }
+
+        centerButton();
+
+        // Gera posição aleatória dentro dos limites da janela
+        function getRandomPosition() {
+            const maxX = window.innerWidth - button.offsetWidth;
+            const maxY = window.innerHeight - button.offsetHeight;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            return { x: randomX, y: randomY };
+        }
+
+        // Calcula a distância entre dois pontos
+        function getDistance(x1, y1, x2, y2) {
+            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
+
+        // Detecta movimento do mouse
+        document.addEventListener('mousemove', (e) => {
+            const rect = button.getBoundingClientRect();
+            const buttonX = rect.left + rect.width / 2;
+            const buttonY = rect.top + rect.height / 2;
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const distance = getDistance(mouseX, mouseY, buttonX, buttonY);
+
+            if (distance < detectionRadius) {
+                const newPos = getRandomPosition();
+                button.style.left = `${newPos.x}px`;
+                button.style.top = `${newPos.y}px`;
+                button.style.transform = 'none'; // Remove a transformação de centralização
+            }
+        });
+
+        // Impede o foco no botão
+        button.addEventListener('focus', () => {
+            button.blur();
+        });
+    </script>
+</body>
+</html>
